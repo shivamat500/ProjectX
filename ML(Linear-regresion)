@@ -1,0 +1,67 @@
+#Making the Project on Predictiong the Price of the House on the basis of certain features
+
+
+import numpy as np
+import pandas as pd
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import seaborn as sns
+from distutils.version import LooseVersion
+df = pd.read_csv('Usa_Housing_No.csv')  
+print(df.columns) 
+df.fillna('0', inplace = True)
+
+######## basic operations for checking dataset #####
+print(df.head(12))
+print(df.describe())
+print(df.columns)
+print(df.corr())
+sns.pairplot(df) ### dont run this as it take lot of time
+sns.distplot(df['Price'])
+sns.heatmap(df.corr(),annot=True)
+
+############ now beging assigning datasets##########
+x=df[['YearBuilt', 'BedroomNo', 'Fireplaces', 'CarParking', 'YrSold']]
+y= df['SalePrice']
+
+# Calling Model for Fitting the data
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
+
+# Training the model by feeding the training  data and testing  data in 10:4 proportion
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.4, random_state = 101)
+from sklearn.linear_model import LinearRegression
+
+#Making the object of Linear Regerssion model
+lm = LinearRegression()
+
+#Feeting the training data in model
+lm.fit(x_train, y_train)
+
+# Printing the intercept 
+print(lm.intercept_)
+print(x_train.columns)
+print(lm.intercept_)
+
+# Printing the Coefficients
+print(lm.coef_)
+cdf = pd.DataFrame(lm.coef_,x.columns,columns=['Coeff'])
+
+print(cdf)
+#Making the presictions of testig data being given 
+predictions = lm.predict(x_test)
+
+print(predictions)
+print(y_test)
+
+#Plotting the scatter graph of actual and predicted results
+print(plt.scatter(y_test,predictions))
+print(sns.distplot(y_test-predictions))
+
+#Now finding the error using the checking the efficiency of model
+
+print(metrics.mean_absolute_error(y_test,predictions))
+print(np.sqrt((metrics.mean_absolute_error(y_test,predictions))))
+####################### project complete #######################
+#Conclusion >
+#The Project  is Giving the Price of the house with the accurecy of 91.3%
